@@ -1,0 +1,22 @@
+{
+  "name": "openspec-sdd",
+  "version": "0.3.1",
+  "description": "SDD team add-on for OpenSpec: the `sdd` workflow schema (spec-driven + test cases), traceability check and test-case catalog merge. Installs on top of stock OpenSpec.",
+  "type": "module",
+  "bin": {
+    "openspec-sdd": "bin/openspec-sdd.mjs"
+  },
+  "files": ["bin", "lib", "schemas", "install.ps1", "install.sh", "README.md"],
+  "engines": {
+    "node": ">=20.19.0"
+  },
+  "openspec": {
+    "compatible": ">=1.15.0 <2.0.0",
+    "baseSchema": "spec-driven@1.15.0"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.mjs"
+  },
+  "license": "MIT",
+  "private": true
+}

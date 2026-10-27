@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: sdd-frontend
+  labels:
+    app.kubernetes.io/name: sdd-frontend
+    app.kubernetes.io/part-of: sdd
+spec:
+  selector:
+    app.kubernetes.io/name: sdd-frontend
+  ports:
+    - name: http
+      port: 80
+      targetPort: http

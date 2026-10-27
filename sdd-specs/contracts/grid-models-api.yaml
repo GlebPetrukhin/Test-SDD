@@ -1,0 +1,830 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Обмен моделями сети — демонстрационный пилот",
+    "version": "1.0.0",
+    "description": "Демонстрационная атрибуция без проверки личности. JSON-модель, не CIM."
+  },
+  "paths": {
+    "/api/organizations": {
+      "get": {
+        "operationId": "listOrganizations",
+        "responses": {
+          "200": {
+            "description": "Успешно",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Organization"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/grid-models": {
+      "get": {
+        "operationId": "listGridModels",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешно",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Model"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Некорректный запрос",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Не найдено",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Конфликт или недопустимый переход",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Хранилище недоступно",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createGridModel",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Успешно",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Model"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Некорректный запрос",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Не найдено",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Конфликт или недопустимый переход",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Хранилище недоступно",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/grid-models/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "operationId": "getGridModel",
+        "responses": {
+          "200": {
+            "description": "Успешно",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Model"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Некорректный запрос",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Не найдено",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Конфликт или недопустимый переход",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Хранилище недоступно",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/grid-models/{id}/versions": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "operationId": "createGridModelVersion",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateVersion"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Успешно",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Model"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Некорректный запрос",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Не найдено",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Конфликт или недопустимый переход",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Хранилище недоступно",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/grid-models/{id}/versions/{versionId}/actions": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "versionId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "operationId": "actOnGridModelVersion",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Action"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Успешно",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Model"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Некорректный запрос",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Не найдено",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Конфликт или недопустимый переход",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Хранилище недоступно",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/grid-models/{id}/versions/{versionId}/download": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "versionId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "operationId": "downloadGridModelVersion",
+        "responses": {
+          "200": {
+            "description": "Успешно",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Document"
+                }
+              }
+            },
+            "headers": {
+              "Content-Disposition": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "attachment; filename=\"model-ID-vN.json\""
+              }
+            }
+          },
+          "400": {
+            "description": "Некорректный запрос",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Не найдено",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Конфликт или недопустимый переход",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Хранилище недоступно",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Organization": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "kind"
+        ],
+        "additionalProperties": false
+      },
+      "GridObject": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "description": "substation/line/transformer/busbar; неизвестное значение сохраняется с ошибкой проверки"
+          },
+          "voltageKv": {
+            "type": "number",
+            "description": "0 < кВ <= 1150; нарушение сохраняется с ошибкой проверки"
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "type",
+          "voltageKv",
+          "links"
+        ],
+        "additionalProperties": false
+      },
+      "Document": {
+        "type": "object",
+        "properties": {
+          "objects": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GridObject"
+            },
+            "minItems": 1,
+            "maxItems": 1000
+          }
+        },
+        "required": [
+          "objects"
+        ],
+        "additionalProperties": false
+      },
+      "Change": {
+        "type": "object",
+        "properties": {
+          "objectId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "added",
+              "modified",
+              "removed"
+            ]
+          }
+        },
+        "required": [
+          "objectId",
+          "name",
+          "kind"
+        ],
+        "additionalProperties": false
+      },
+      "Version": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "number": {
+            "type": "integer"
+          },
+          "title": {
+            "type": "string"
+          },
+          "baseVersionId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "organizationId": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "enum": [
+              "draft",
+              "review",
+              "approved",
+              "published",
+              "rejected"
+            ]
+          },
+          "document": {
+            "$ref": "#/components/schemas/Document"
+          },
+          "issues": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "changes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Change"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "number",
+          "title",
+          "baseVersionId",
+          "organizationId",
+          "createdAt",
+          "status",
+          "document",
+          "issues",
+          "changes"
+        ],
+        "additionalProperties": false
+      },
+      "Event": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "versionId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "action": {
+            "type": "string"
+          },
+          "organizationId": {
+            "type": "string"
+          },
+          "comment": {
+            "type": "string"
+          },
+          "at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "versionId",
+          "action",
+          "organizationId",
+          "comment",
+          "at"
+        ],
+        "additionalProperties": false
+      },
+      "Model": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "region": {
+            "type": "string"
+          },
+          "ownerId": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer"
+          },
+          "publishedVersionId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "versions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Version"
+            }
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Event"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "region",
+          "ownerId",
+          "revision",
+          "publishedVersionId",
+          "versions",
+          "events"
+        ],
+        "additionalProperties": false
+      },
+      "CreateModel": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "region": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "ownerId": {
+            "type": "string"
+          },
+          "organizationId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "region",
+          "ownerId",
+          "organizationId"
+        ],
+        "additionalProperties": false
+      },
+      "CreateVersion": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 300
+          },
+          "baseVersionId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "revision": {
+            "type": "integer"
+          },
+          "organizationId": {
+            "type": "string"
+          },
+          "document": {
+            "$ref": "#/components/schemas/Document"
+          }
+        },
+        "required": [
+          "title",
+          "baseVersionId",
+          "revision",
+          "organizationId",
+          "document"
+        ],
+        "additionalProperties": false
+      },
+      "Action": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "enum": [
+              "submit",
+              "approve",
+              "reject",
+              "publish"
+            ]
+          },
+          "revision": {
+            "type": "integer"
+          },
+          "organizationId": {
+            "type": "string"
+          },
+          "comment": {
+            "type": "string",
+            "maxLength": 2000
+          }
+        },
+        "required": [
+          "action",
+          "revision",
+          "organizationId",
+          "comment"
+        ],
+        "additionalProperties": false
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "message"
+        ],
+        "additionalProperties": false
+      }
+    }
+  }
+}

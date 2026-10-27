@@ -1,0 +1,7 @@
+{
+  "objects": [
+    { "id": "ps-north", "name": "ПС Северная", "type": "substation", "voltageKv": 220, "links": ["line-1"] },
+    { "id": "line-1", "name": "ВЛ Северная — Центральная", "type": "line", "voltageKv": 220, "links": ["ps-north", "ps-center"] },
+    { "id": "ps-center", "name": "ПС Центральная", "type": "substation", "voltageKv": 220, "links": ["line-1"] }
+  ]
+}

@@ -1,0 +1,67 @@
+# Только локальный демонстрационный пароль. Перед внешним развёртыванием замените Secret.
+apiVersion: v1
+kind: Secret
+metadata:
+  name: sdd-grid-db
+type: Opaque
+stringData:
+  POSTGRES_PASSWORD: sdd-local-demo
+  connection: Host=sdd-postgres;Database=sdd;Username=sdd;Password=sdd-local-demo;Timeout=5;Command Timeout=15
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: sdd-grid-data
+spec:
+  accessModes: [ReadWriteOnce]
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sdd-postgres
+spec:
+  selector: { app: sdd-postgres }
+  ports:
+    - { port: 5432, targetPort: 5432 }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sdd-postgres
+spec:
+  replicas: 1
+  strategy: { type: Recreate }
+  selector:
+    matchLabels: { app: sdd-postgres }
+  template:
+    metadata:
+      labels: { app: sdd-postgres }
+    spec:
+      nodeSelector: { kubernetes.io/os: linux }
+      containers:
+        - name: postgres
+          image: public.ecr.aws/docker/library/postgres:17-alpine
+          env:
+            - { name: POSTGRES_USER, value: sdd }
+            - { name: POSTGRES_DB, value: sdd }
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef: { name: sdd-grid-db, key: POSTGRES_PASSWORD }
+            - { name: PGDATA, value: /var/lib/postgresql/data/pgdata }
+          ports: [{ containerPort: 5432 }]
+          readinessProbe:
+            exec: { command: [pg_isready, -U, sdd, -d, sdd] }
+            timeoutSeconds: 5
+            initialDelaySeconds: 5
+            periodSeconds: 3
+          resources:
+            requests: { cpu: 50m, memory: 64Mi }
+            limits: { memory: 256Mi }
+          volumeMounts:
+            - { name: data, mountPath: /var/lib/postgresql/data }
+      volumes:
+        - name: data
+          persistentVolumeClaim: { claimName: sdd-grid-data }

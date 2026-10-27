@@ -1,0 +1,143 @@
+From: SDD sandbox <noreply@anthropic.com>
+Subject: [PATCH] spec-driven: add test-cases artifact between design and tasks
+
+Adds a `test-cases` artifact to the spec-driven schema: test cases derived
+from every spec scenario (ID, scenario, level, preconditions, test data,
+steps, expected result, automation location) plus a coverage table.
+`tasks` now requires `test-cases`, and tasks for automated tests name the
+test case IDs they implement.
+
+Base: @fission-ai/openspec 1.15.0, schemas/spec-driven
+Markers: every hunk in schema.yaml is tagged `SDD-PATCH(test-cases)`.
+
+Apply to the OpenSpec source tree (repo root):    git apply 0001-spec-driven-test-cases.patch
+Apply to a project fork of the schema:            git apply -C1 -p3 --directory=openspec/schemas/<fork-name> 0001-spec-driven-test-cases.patch
+  (then keep `name: <fork-name>` on the first line of the fork's schema.yaml)
+---
+diff --git a/schemas/spec-driven/schema.yaml b/schemas/spec-driven/schema.yaml
+index 81336eb..bfefdec 100644
+--- a/schemas/spec-driven/schema.yaml
++++ b/schemas/spec-driven/schema.yaml
+@@ -1,6 +1,7 @@
+ name: spec-driven
+ version: 1
+-description: Default OpenSpec workflow - proposal → specs → design → tasks
++# SDD-PATCH(test-cases): description mentions the new test-cases artifact
++description: Default OpenSpec workflow - proposal → specs → design → test-cases → tasks
+ artifacts:
+   - id: proposal
+     generates: proposal.md
+@@ -195,10 +196,66 @@ artifacts:
+     requires:
+       - proposal
+ 
++  # SDD-PATCH(test-cases) begin: new artifact - test cases derived from spec scenarios
++  - id: test-cases
++    generates: test-cases.md
++    description: Test cases derived from spec scenarios (steps, data, expected result, test level)
++    template: test-cases.md
++    instruction: |
++      Create the test cases that prove every scenario in this change's specs.
++
++      Test cases turn scenarios into checks a tester or a test author can run
++      without guessing. They are the bridge between specs (WHAT) and tasks
++      (the work, including the automated tests to write). Do not write test
++      code here - only the cases.
++
++      Inputs:
++      - Every spec delta of this change (`specs/**/spec.md`): each scenario
++        under ADDED or MODIFIED Requirements needs at least one test case.
++        Scenarios under REMOVED Requirements need none; list the existing
++        tests that must be deleted in the Coverage section instead.
++      - design.md, when present: API contracts, data formats, error codes and
++        limits give you concrete test data and expected results.
++
++      For each scenario, write:
++      - The case that proves the scenario as written.
++      - Negative and boundary cases only when the scenario or its requirement
++        states the behavior (an error condition, an empty value, a limit).
++        Every test case MUST trace to a scenario. If you find behavior that
++        matters but no scenario states it, do not invent a test case for it:
++        list it under "Gaps" so the specs can be updated first.
++
++      Each test case has:
++      - **ID**: stable and unique. If the project config defines a scenario
++        ID convention, derive test case IDs from the scenario ID (for example
++        `<scenario-id>.<n>`); otherwise use `TC-<capability>-<nn>`. Never
++        reuse or renumber an ID once the change is reviewed.
++      - **Scenario**: the scenario it proves (name or ID).
++      - **Level**: the lowest level that can observe the behavior -
++        `unit`, `integration`, `e2e`, or `manual`. Use `e2e` only for flows a
++        user sees end to end, and `manual` only with a stated reason.
++      - **Preconditions** and **Test data**: explicit values, not "valid data".
++      - **Steps**: numbered, observable actions.
++      - **Expected result**: observable outcome that maps to the scenario's
++        THEN/AND lines.
++      - **Automation**: where the automated test will live (repository/path or
++        test suite), or `manual` with the reason.
++
++      End with a **Coverage** table: one row per scenario of this change and
++      the IDs of the test cases that cover it. A scenario with no test case
++      is an error - fix it before finishing.
++
++      Keep cases short and concrete; one behavior per case.
++    requires:
++      - specs
++      - design
++  # SDD-PATCH(test-cases) end
++
+   - id: tasks
+     generates: tasks.md
+     description: Implementation checklist with trackable tasks
+     template: tasks.md
++    # SDD-PATCH(test-cases): instruction below ends with a new paragraph "Automated tests come from test-cases.md ..."
+     instruction: |
+       Create the task list that breaks down the implementation work.
+ 
+@@ -260,9 +317,17 @@ artifacts:
+       ```
+ 
+       Reference specs for what needs to be built, design for how to build it.
++
++      Automated tests come from test-cases.md: every test case whose level is
++      not `manual` MUST be covered by a task that names its ID (one task may
++      cover several cases of the same scenario and level). Put that task in the
++      group of the component that implements the behavior, before the
++      implementation task it verifies. Manual test cases go into the final
++      integration group as verification tasks.
+     requires:
+       - specs
+       - design
++      - test-cases  # SDD-PATCH(test-cases)
+ 
+ apply:
+   requires: [tasks]
+diff --git a/schemas/spec-driven/templates/test-cases.md b/schemas/spec-driven/templates/test-cases.md
+new file mode 100644
+index 0000000..69e8972
+--- /dev/null
++++ b/schemas/spec-driven/templates/test-cases.md
+@@ -0,0 +1,23 @@
++# Test Cases
++
++## <!-- capability-path -->
++
++### <!-- TC ID -->: <!-- short name -->
++- **Scenario**: <!-- scenario it proves -->
++- **Level**: <!-- unit | integration | e2e | manual -->
++- **Preconditions**: <!-- state before the test -->
++- **Test data**: <!-- explicit values -->
++- **Steps**:
++  1. <!-- action -->
++- **Expected result**: <!-- observable outcome, maps to THEN/AND -->
++- **Automation**: <!-- repository/path of the automated test, or "manual: reason" -->
++
++## Gaps
++
++<!-- Behavior that matters but no scenario states it. Update specs first. Write "None" if empty. -->
++
++## Coverage
++
++| Scenario | Test cases |
++|---|---|
++| <!-- scenario --> | <!-- TC IDs --> |

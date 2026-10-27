@@ -1,0 +1,9 @@
+{
+  "$comment": "Настройки дополнения openspec-sdd для этого хранилища: где искать автотесты для trace-check (пути от папки sdd-specs).",
+  "traceCheck": {
+    "codeRepos": [
+      { "path": "../sdd-backend", "dirs": ["tests"], "exts": [".cs"] },
+      { "path": "../sdd-frontend", "dirs": ["src", "tests"], "exts": [".ts"] }
+    ]
+  }
+}

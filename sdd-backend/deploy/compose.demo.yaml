@@ -1,0 +1,40 @@
+# Локальный демонстрационный стенд. Запуск из корня SDD:
+# docker compose -p sdd-grid-demo -f sdd-backend/deploy/compose.demo.yaml up -d
+services:
+  db:
+    image: public.ecr.aws/docker/library/postgres:17-alpine
+    environment:
+      POSTGRES_USER: sdd
+      POSTGRES_PASSWORD: sdd-local-demo
+      POSTGRES_DB: sdd
+    volumes:
+      - grid-data:/var/lib/postgresql/data
+    healthcheck:
+      test: [CMD-SHELL, "pg_isready -U sdd -d sdd"]
+      interval: 3s
+      timeout: 3s
+      retries: 40
+  api:
+    image: sdd-backend:grid-mvp
+    build:
+      context: ..
+    environment:
+      ConnectionStrings__GridModels: Host=db;Database=sdd;Username=sdd;Password=sdd-local-demo;Timeout=5;Command Timeout=15
+      ASPNETCORE_ENVIRONMENT: Production
+      APP_VERSION: grid-mvp
+      DOTNET_PROCESSOR_COUNT: '2'
+    depends_on:
+      db:
+        condition: service_healthy
+  web:
+    image: sdd-frontend:grid-mvp
+    build:
+      context: ../../sdd-frontend
+    environment:
+      API_UPSTREAM: http://api:8080
+    ports:
+      - 127.0.0.1:8081:8080
+    depends_on:
+      - api
+volumes:
+  grid-data:

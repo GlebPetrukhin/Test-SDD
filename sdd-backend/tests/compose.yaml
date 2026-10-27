@@ -1,0 +1,22 @@
+services:
+  db:
+    image: public.ecr.aws/docker/library/postgres:17-alpine
+    environment:
+      POSTGRES_USER: sdd
+      POSTGRES_PASSWORD: sdd-test-only
+      POSTGRES_DB: sdd_test
+    healthcheck:
+      test: [CMD-SHELL, "pg_isready -U sdd -d sdd_test"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+  tests:
+    build:
+      context: ..
+      dockerfile: tests/Dockerfile
+    environment:
+      GRID_TEST_CONNECTION: Host=db;Database=sdd_test;Username=sdd;Password=sdd-test-only;Timeout=5
+      DOTNET_PROCESSOR_COUNT: '2'
+    depends_on:
+      db:
+        condition: service_healthy

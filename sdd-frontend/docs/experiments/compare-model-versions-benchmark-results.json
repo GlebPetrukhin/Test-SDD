@@ -1,0 +1,80 @@
+{
+  "purpose": "CPU feasibility estimate only; excludes browser rendering, network, full Model history and production implementation",
+  "runtime": "v24.22.1",
+  "platform": "win32",
+  "cpu": "12th Gen Intel(R) Core(TM) i3-1215U",
+  "results": [
+    {
+      "objectsPerVersion": 1000,
+      "linksPerObject": 8,
+      "case": "identical",
+      "pairJsonBytes": 335606,
+      "samples": 40,
+      "medianMs": 0.3942000000000121,
+      "p95Ms": 1.0816000000000088,
+      "maxMs": 5.373000000000005,
+      "pairParseMedianMs": 1.0756000000000014,
+      "observedChanges": 0
+    },
+    {
+      "objectsPerVersion": 1000,
+      "linksPerObject": 8,
+      "case": "all-four-fields-changed",
+      "pairJsonBytes": 350606,
+      "samples": 40,
+      "medianMs": 0.40260000000000673,
+      "p95Ms": 1.1357,
+      "maxMs": 1.3483999999999838,
+      "pairParseMedianMs": 1.0127999999999986,
+      "observedChanges": 1000
+    },
+    {
+      "objectsPerVersion": 1000,
+      "linksPerObject": 100,
+      "case": "identical",
+      "pairJsonBytes": 2539606,
+      "samples": 40,
+      "medianMs": 0.5501000000000147,
+      "p95Ms": 1.1251000000000033,
+      "maxMs": 1.2297999999999831,
+      "pairParseMedianMs": 7.9664000000000215,
+      "observedChanges": 0
+    },
+    {
+      "objectsPerVersion": 1000,
+      "linksPerObject": 100,
+      "case": "all-four-fields-changed",
+      "pairJsonBytes": 2555606,
+      "samples": 40,
+      "medianMs": 0.42959999999999354,
+      "p95Ms": 1.0966000000000236,
+      "maxMs": 4.207899999999995,
+      "pairParseMedianMs": 8.802399999999977,
+      "observedChanges": 1000
+    },
+    {
+      "objectsPerVersion": 1000,
+      "linksPerObject": 1000,
+      "case": "identical",
+      "pairJsonBytes": 25939606,
+      "samples": 40,
+      "medianMs": 6.4280999999998585,
+      "p95Ms": 9.92229999999995,
+      "maxMs": 27.835000000000036,
+      "pairParseMedianMs": 93.91489999999999,
+      "observedChanges": 0
+    },
+    {
+      "objectsPerVersion": 1000,
+      "linksPerObject": 1000,
+      "case": "all-four-fields-changed",
+      "pairJsonBytes": 25952606,
+      "samples": 40,
+      "medianMs": 5.442500000000109,
+      "p95Ms": 7.202900000000227,
+      "maxMs": 11.511800000000221,
+      "pairParseMedianMs": 148.57839999999987,
+      "observedChanges": 1000
+    }
+  ]
+}

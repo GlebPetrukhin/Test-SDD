@@ -1,0 +1,7 @@
+# Единые переводы строк на Windows и Linux: в контейнеры и кластер всё уходит с LF.
+* text=auto eol=lf
+*.ps1 text eol=crlf
+*.cmd text eol=crlf
+*.bat text eol=crlf
+*.png binary
+*.ico binary

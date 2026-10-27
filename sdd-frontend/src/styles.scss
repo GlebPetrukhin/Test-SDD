@@ -1,0 +1,54 @@
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  background: #f5f7f8;
+  color: #203432;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  font-size: 14px;
+}
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+button,
+a,
+input,
+select,
+textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+button {
+  cursor: pointer;
+}
+button:disabled {
+  cursor: wait;
+  opacity: 0.55;
+}
+:focus-visible {
+  outline: 3px solid #137d6e;
+  outline-offset: 3px;
+}
+.sidebar app-system-status .status {
+  border: 0;
+  padding: 0;
+  color: #b9cecb;
+}
+.sidebar app-system-status h2 {
+  display: none;
+}
+.sidebar app-system-status .ok {
+  color: #a7dfcb;
+  font-size: 12px;
+}
+.sidebar app-system-status .fail {
+  color: #ffc8c3;
+  font-size: 12px;
+}
+.sidebar app-system-status .version {
+  font-size: 10px;
+  color: #c0cecc;
+}

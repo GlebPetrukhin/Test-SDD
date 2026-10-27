@@ -1,0 +1,204 @@
+{
+  "main": {
+    "id": "d1a8ecb17e59710d",
+    "type": "split",
+    "children": [
+      {
+        "id": "191696042e948e0a",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "a41760b396b20dc5",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "openspec/changes/compare-model-versions/specs/grid-models/spec.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "spec"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "d352c80974624680",
+    "type": "split",
+    "children": [
+      {
+        "id": "ea0517cf6a7d101d",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "85abf57f3bd8d62e",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Файловый менеджер"
+            }
+          },
+          {
+            "id": "9f0a91910222061a",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Поиск"
+            }
+          },
+          {
+            "id": "fe4803d72f9689b6",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-bookmark",
+              "title": "Закладки"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "081f60a80bbcb6b8",
+    "type": "split",
+    "children": [
+      {
+        "id": "cfd75fb7bd9379b6",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "25cfbf03ade34662",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "openspec/changes/compare-model-versions/specs/grid-models/spec.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Обратные ссылки"
+            }
+          },
+          {
+            "id": "5c67aa7e8ad15b3d",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "openspec/changes/compare-model-versions/specs/grid-models/spec.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Исходящие ссылки"
+            }
+          },
+          {
+            "id": "b7e6f5c5af6532d0",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Теги"
+            }
+          },
+          {
+            "id": "cf64cdb40353308a",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "Все свойства"
+            }
+          },
+          {
+            "id": "1b11741d5ab7f9c4",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "openspec/changes/compare-model-versions/specs/grid-models/spec.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Структура"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Меню быстрого перехода": false,
+      "graph:Граф": false,
+      "canvas:Создать новый холст": false,
+      "daily-notes:Сегодняшняя заметка": false,
+      "templates:Вставить шаблон": false,
+      "command-palette:Открыть палитру команд": false,
+      "bases:Создать новую базу": false
+    }
+  },
+  "active": "a41760b396b20dc5",
+  "lastOpenFiles": [
+    "Без названия.md",
+    "openspec/changes/compare-model-versions/specs/grid-models/spec.md",
+    "openspec/changes/compare-model-versions/tasks.md",
+    "openspec/changes/compare-model-versions/test-cases.md",
+    "openspec/changes/compare-model-versions/design.md",
+    "openspec/changes/compare-model-versions/proposal.md",
+    "openspec/specs/grid-models/spec.md",
+    "openspec/specs/system-status/spec.md",
+    "openspec/specs/system-status/test-cases.md",
+    "openspec/specs/grid-models/test-cases.md"
+  ]
+}

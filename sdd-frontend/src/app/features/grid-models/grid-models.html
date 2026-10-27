@@ -1,0 +1,626 @@
+<a class="skip-link" href="#main-content">Перейти к содержимому</a>
+<div class="workspace">
+  <aside class="sidebar" aria-label="Основная навигация">
+    <a class="brand" href="/" aria-label="Сеть — главная"
+      ><span class="brand-mark"><app-icon name="network" /></span
+      ><span>сеть<span class="brand-dot">.</span><small>ПРОСТРАНСТВО МОДЕЛЕЙ</small></span></a
+    >
+    <div class="workspace-label">РАБОЧЕЕ ПРОСТРАНСТВО</div>
+    <nav>
+      <button
+        [class.active]="view() === 'models'"
+        [attr.aria-current]="view() === 'models' ? 'page' : null"
+        (click)="navigate('models')"
+      >
+        <app-icon name="network" />Модели сети
+      </button>
+      <button
+        [class.active]="view() === 'reviews'"
+        [attr.aria-current]="view() === 'reviews' ? 'page' : null"
+        (click)="navigate('reviews')"
+      >
+        <app-icon name="check" />Согласование
+        @if (reviewCount()) {
+          <span class="nav-count">{{ reviewCount() }}</span>
+        }
+      </button>
+      <button [class.active]="view() === 'activity'" (click)="navigate('activity')">
+        <app-icon name="clock" />Журнал событий
+      </button>
+      <button [class.active]="view() === 'organizations'" (click)="navigate('organizations')">
+        <app-icon name="users" />Организации
+      </button>
+    </nav>
+    <div class="sidebar-note">
+      <span class="note-mark">↗</span><strong>Одна сеть.<br />Согласованные данные.</strong>
+      <p>От изменения модели<br />до общей актуальной версии.</p>
+    </div>
+    <div class="sidebar-bottom">
+      <app-system-status />
+      <div class="sidebar-caption">СЕТЬ / ДЕМОНСТРАЦИОННЫЙ ПИЛОТ</div>
+    </div>
+  </aside>
+
+  <div class="main-area">
+    <header class="topbar">
+      <div class="breadcrumb">
+        Рабочее пространство <span>/</span>
+        <strong>{{ view() === 'models' ? 'Реестр моделей' : pageTitle() }}</strong>
+      </div>
+      <label class="identity"
+        ><span class="avatar">ОР</span
+        ><span class="identity-text"
+          >Организация участника<select
+            aria-label="Демонстрационная организация"
+            (change)="organizationId.set(field($event))"
+          >
+            @for (o of organizations(); track o.id) {
+              <option [value]="o.id" [selected]="o.id === organizationId()">{{ o.name }}</option>
+            }
+          </select></span
+        ></label
+      >
+    </header>
+    <main id="main-content" tabindex="-1">
+      <div class="demo-label"><span></span>Демонстрационный режим · без проверки личности</div>
+      <div class="page-heading">
+        <div>
+          <div class="eyebrow">СОВМЕСТНАЯ РАБОТА С ДАННЫМИ</div>
+          <h1>{{ pageTitle() }}</h1>
+          <p>Формируйте, проверяйте и согласовывайте модели в едином пространстве.</p>
+        </div>
+        <button
+          class="primary"
+          (click)="openDialog('create')"
+          [disabled]="loading() || loadError() || busy()"
+        >
+          <app-icon name="plus" />Новая модель
+        </button>
+      </div>
+
+      @if (notice()) {
+        <div class="notice" role="status"><app-icon name="check" />{{ notice() }}</div>
+      }
+      @if (error()) {
+        <div class="error-banner" role="alert">
+          <span>{{ error() }}</span
+          ><button class="secondary" (click)="refresh()" [disabled]="busy()">
+            Обновить данные
+          </button>
+        </div>
+      }
+      @if (loading()) {
+        <section class="empty-state" role="status">
+          <app-icon name="refresh" />
+          <h2>Загружаем рабочее пространство…</h2>
+        </section>
+      } @else if (loadError()) {
+        <section class="empty-state">
+          <app-icon name="alert" />
+          <h2>Не удалось загрузить модели</h2>
+          <p>Проверьте соединение с сервером и повторите запрос.</p>
+          <button class="primary" (click)="refresh()">Повторить</button>
+        </section>
+      } @else {
+        @if (view() === 'models' || view() === 'reviews') {
+          <section class="metrics" aria-label="Сводка по реестру">
+            <div class="metric">
+              <div>
+                <span>Всего моделей</span><strong>{{ models().length }}</strong
+                ><small>В едином реестре</small>
+              </div>
+              <span class="metric-icon"><app-icon name="network" /></span>
+            </div>
+            <div class="metric">
+              <div>
+                <span>На согласовании</span
+                ><strong>{{ reviewCount() }}<i class="metric-dot amber"></i></strong
+                ><small>Ожидают решения участников</small>
+              </div>
+              <span class="metric-icon amber"><app-icon name="clock" /></span>
+            </div>
+            <div class="metric">
+              <div>
+                <span>Опубликованы</span
+                ><strong>{{ publishedCount() }}<i class="metric-dot"></i></strong
+                ><small>Доступны для обмена</small>
+              </div>
+              <span class="metric-icon"><app-icon name="check" /></span>
+            </div>
+            <div class="metric">
+              <div>
+                <span>Версии с ошибками</span><strong>{{ issueCount() }}</strong
+                ><small>{{
+                  issueCount() ? 'Требуют исправления' : 'Ошибок структуры не найдено'
+                }}</small>
+              </div>
+              <span class="metric-icon neutral"><app-icon name="file" /></span>
+            </div>
+          </section>
+          <div class="content-grid" [class.with-detail]="!!selected()">
+            <section class="panel registry" aria-labelledby="registry-title">
+              <div class="panel-heading">
+                <h2 id="registry-title">
+                  {{ view() === 'reviews' ? 'Очередь согласования' : 'Реестр моделей' }}
+                  <span class="count">{{ filtered().length }}</span>
+                </h2>
+                <button
+                  class="icon-button"
+                  aria-label="Обновить реестр"
+                  (click)="refresh()"
+                  [disabled]="busy()"
+                >
+                  <app-icon name="refresh" />
+                </button>
+              </div>
+              <div class="filters">
+                <label class="search"
+                  ><app-icon name="search" /><input
+                    type="search"
+                    aria-label="Поиск моделей"
+                    placeholder="Найти модель, регион или организацию"
+                    [value]="query()"
+                    (input)="query.set(field($event))" /></label
+                ><select
+                  aria-label="Фильтр по статусу"
+                  [value]="filter()"
+                  (change)="filter.set(field($event))"
+                >
+                  <option value="all">Все статусы</option>
+                  @for (s of ['draft', 'review', 'approved', 'published', 'rejected']; track s) {
+                    <option [value]="s">{{ statusNames[s] }}</option>
+                  }
+                </select>
+              </div>
+              <div class="table-scroll">
+                <table class="model-table">
+                  <thead>
+                    <tr>
+                      <th scope="col">Модель / организация</th>
+                      <th scope="col">Актуальная</th>
+                      <th scope="col">Последняя версия</th>
+                      <th scope="col"><span class="sr-only">Открыть</span></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (m of filtered(); track m.id) {
+                      <tr [class.selected-row]="selectedId() === m.id">
+                        <td>
+                          <button
+                            class="model-link"
+                            [attr.aria-label]="'Открыть модель ' + m.name"
+                            (click)="openModel(m)"
+                          >
+                            <span class="model-icon"><app-icon name="network" /></span
+                            ><span
+                              ><strong>{{ m.name }}</strong
+                              ><small>{{ orgName(m.ownerId) }}</small
+                              ><small>{{ m.region }}</small></span
+                            >
+                          </button>
+                        </td>
+                        <td>
+                          @if (published(m); as p) {
+                            <span class="version-number">v{{ p.number }}</span>
+                          } @else {
+                            <span class="muted">—</span>
+                          }
+                        </td>
+                        <td>
+                          @if (latest(m); as v) {
+                            <span class="badge" [class]="'badge ' + v.status"
+                              ><i></i>{{ statusNames[v.status] }}</span
+                            ><small class="row-date"
+                              >v{{ v.number }} · {{ v.createdAt | date: 'dd.MM.yyyy' }}</small
+                            >
+                          } @else {
+                            <span class="muted">Нет версий</span>
+                          }
+                        </td>
+                        <td>
+                          <button
+                            class="icon-button"
+                            [attr.aria-label]="'Карточка ' + m.name"
+                            (click)="openModel(m)"
+                          >
+                            <app-icon name="arrow" />
+                          </button>
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+              @if (!filtered().length) {
+                <div class="empty-list">
+                  <app-icon name="search" />
+                  <h3>Модели не найдены</h3>
+                  <p>Измените условия поиска или создайте новую модель.</p>
+                </div>
+              }
+              <div class="table-footer">
+                <span>{{ filtered().length }} из {{ models().length }} моделей</span
+                ><span><i class="live-dot"></i> Данные из общего реестра</span>
+              </div>
+              <div class="workflow-note">
+                <app-icon name="check" />
+                <div>
+                  <strong>Каждое изменение проходит проверку</strong>
+                  <p>Новая версия → проверка → согласование → публикация</p>
+                </div>
+              </div>
+            </section>
+
+            @if (selected(); as m) {
+              <section
+                class="panel detail"
+                data-testid="model-detail"
+                aria-labelledby="detail-title"
+              >
+                <div class="detail-top">
+                  <span class="eyebrow">КАРТОЧКА МОДЕЛИ</span
+                  ><button
+                    class="icon-button"
+                    aria-label="Закрыть карточку"
+                    (click)="selectedId.set('')"
+                  >
+                    <app-icon name="close" />
+                  </button>
+                </div>
+                <div class="detail-heading">
+                  <h2 id="detail-title">{{ m.name }}</h2>
+                  <p>{{ m.region }} <span>·</span> {{ orgName(m.ownerId) }}</p>
+                </div>
+                <div class="detail-toolbar">
+                  <label
+                    >Версия<select
+                      aria-label="Версия модели"
+                      (change)="chooseVersion(field($event))"
+                    >
+                      @for (v of m.versions; track v.id) {
+                        <option [value]="v.id" [selected]="v.id === version()?.id">
+                          v{{ v.number }} · {{ v.title }}
+                        </option>
+                      }
+                    </select></label
+                  ><button class="secondary" (click)="openDialog('upload')" [disabled]="busy()">
+                    <app-icon name="upload" />Загрузить версию
+                  </button>
+                </div>
+                @if (version(); as v) {
+                  <div class="version-heading">
+                    <span class="badge" [class]="'badge ' + v.status"
+                      ><i></i>{{ statusNames[v.status] }}</span
+                    ><span class="muted">{{ v.createdAt | date: 'dd.MM.yyyy, HH:mm' }}</span>
+                  </div>
+                  <p class="version-title">{{ v.title }}</p>
+                  <div class="mini-summary">
+                    <span
+                      ><strong>{{ v.document.objects.length }}</strong
+                      >объектов</span
+                    ><span
+                      ><strong>{{ v.changes.length }}</strong
+                      >изменений</span
+                    ><span
+                      ><strong>{{ v.issues.length }}</strong
+                      >ошибок</span
+                    >
+                  </div>
+                  <div class="validation" [class.invalid]="v.issues.length > 0">
+                    <app-icon [name]="v.issues.length ? 'alert' : 'check'" />
+                    <div>
+                      <strong>{{
+                        v.issues.length ? 'Есть ошибки проверки' : 'Структура модели проверена'
+                      }}</strong>
+                      <p>Уникальность ID и целостность ссылок</p>
+                    </div>
+                  </div>
+                  @if (v.issues.length) {
+                    <ul class="issues" role="alert">
+                      @for (issue of v.issues; track $index) {
+                        <li>{{ issue }}</li>
+                      }
+                    </ul>
+                  }
+                  <div class="tabs" aria-label="Разделы версии">
+                    @for (
+                      t of [
+                        { id: 'objects', name: 'Объекты' },
+                        { id: 'changes', name: 'Изменения' },
+                        { id: 'history', name: 'История' },
+                      ];
+                      track t.id
+                    ) {
+                      <button
+                        [class.active]="tab() === t.id"
+                        [attr.aria-pressed]="tab() === t.id"
+                        (click)="tab.set(t.id)"
+                      >
+                        {{ t.name }}
+                      </button>
+                    }
+                  </div>
+                  <div class="detail-body" tabindex="0" aria-label="Содержимое версии">
+                    @switch (tab()) {
+                      @case ('objects') {
+                        <div class="object-caption"><span>ОБЪЕКТЫ СЕТИ</span><span>кВ</span></div>
+                        @for (o of v.document.objects; track $index) {
+                          <div class="object-row">
+                            <span class="object-symbol"
+                              ><app-icon [name]="o.type === 'line' ? 'arrow' : 'network'"
+                            /></span>
+                            <div>
+                              <strong>{{ o.name || 'Без названия' }}</strong
+                              ><small>{{ typeNames[o.type] || o.type }} · {{ o.id }}</small>
+                            </div>
+                            <span class="voltage">{{ o.voltageKv }}</span>
+                          </div>
+                        }
+                      }
+                      @case ('changes') {
+                        <p class="muted">
+                          Сравнение с {{ v.baseVersionId ? 'v' + baseName(v) : 'пустой моделью' }}
+                        </p>
+                        @for (c of v.changes; track $index) {
+                          <div class="change-row">
+                            <span class="change-type" [class]="'change-type ' + c.kind">{{
+                              changeNames[c.kind]
+                            }}</span>
+                            <div>
+                              <strong>{{ c.name }}</strong
+                              ><small>{{ c.objectId }}</small>
+                            </div>
+                          </div>
+                        } @empty {
+                          <p class="muted">Изменений относительно базы нет.</p>
+                        }
+                      }
+                      @case ('history') {
+                        <ol class="event-list">
+                          @for (e of m.events; track e.id) {
+                            <li>
+                              <span class="event-dot"></span
+                              ><strong>{{ actionNames[e.action] || e.action }}</strong>
+                              <p>{{ e.comment }}</p>
+                              <small>{{ orgName(e.organizationId) }}</small
+                              ><time>{{ e.at | date: 'dd.MM.yyyy, HH:mm' }}</time>
+                            </li>
+                          }
+                        </ol>
+                      }
+                    }
+                  </div>
+                  <div class="detail-actions">
+                    @switch (v.status) {
+                      @case ('draft') {
+                        <button
+                          class="primary"
+                          (click)="act('submit')"
+                          [disabled]="busy() || v.issues.length > 0"
+                        >
+                          На согласование<app-icon name="arrow" />
+                        </button>
+                      }
+                      @case ('review') {
+                        <button
+                          class="secondary"
+                          (click)="openDialog('reject')"
+                          [disabled]="busy()"
+                        >
+                          Вернуть</button
+                        ><button class="primary" (click)="act('approve')" [disabled]="busy()">
+                          <app-icon name="check" />Согласовать
+                        </button>
+                      }
+                      @case ('approved') {
+                        <button class="primary" (click)="act('publish')" [disabled]="busy()">
+                          <app-icon name="check" />Опубликовать
+                        </button>
+                      }
+                      @case ('published') {
+                        <button class="primary" (click)="download()" [disabled]="busy()">
+                          <app-icon name="download" />Скачать JSON
+                        </button>
+                      }
+                      @case ('rejected') {
+                        <p class="muted">Для исправлений загрузите новую версию.</p>
+                      }
+                    }
+                  </div>
+                } @else {
+                  <div class="empty-list">
+                    <app-icon name="file" />
+                    <h3>Версий пока нет</h3>
+                    <p>Загрузите JSON модели, чтобы начать согласование.</p>
+                  </div>
+                }
+              </section>
+            }
+          </div>
+        } @else if (view() === 'activity') {
+          <section class="panel activity-panel">
+            <div class="panel-heading">
+              <h2>Все действия участников</h2>
+              <span class="count">{{ events().length }}</span>
+            </div>
+            <ol class="event-list">
+              @for (e of events(); track e.id) {
+                <li>
+                  <span class="event-dot"></span
+                  ><strong>{{ actionNames[e.action] || e.action }}</strong>
+                  <p>{{ e.modelName }} · {{ e.comment }}</p>
+                  <small>{{ orgName(e.organizationId) }}</small
+                  ><time>{{ e.at | date: 'dd.MM.yyyy, HH:mm' }}</time>
+                </li>
+              } @empty {
+                <li>Событий пока нет.</li>
+              }
+            </ol>
+          </section>
+        } @else {
+          <div class="organization-grid">
+            @for (o of organizations(); track o.id) {
+              <section class="panel organization-card">
+                <span class="organization-icon"><app-icon name="users" /></span
+                ><span class="eyebrow">{{ o.kind }}</span>
+                <h2>{{ o.name }}</h2>
+                <p>
+                  {{
+                    o.id === organizationId()
+                      ? 'Выбрана для действий в демонстрации'
+                      : 'Участник общего процесса обмена'
+                  }}
+                </p>
+                <button
+                  class="secondary"
+                  (click)="organizationId.set(o.id)"
+                  [disabled]="organizationId() === o.id"
+                >
+                  {{ o.id === organizationId() ? 'Выбрана' : 'Выбрать организацию' }}
+                </button>
+              </section>
+            }
+          </div>
+        }
+        <footer class="page-footer">
+          <span>Единое пространство обмена моделями</span><span>JSON · Пилотная версия 1.0</span>
+        </footer>
+      }
+    </main>
+  </div>
+</div>
+
+<dialog #dialog aria-labelledby="dialog-title" (cancel)="onCancel($event)">
+  <form (submit)="save($event)">
+    <div class="dialog-heading">
+      <div>
+        <span class="eyebrow">СОВМЕСТНАЯ РАБОТА</span>
+        <h2 id="dialog-title">
+          {{
+            mode() === 'create'
+              ? 'Новая модель'
+              : mode() === 'upload'
+                ? 'Новая версия модели'
+                : 'Возврат на доработку'
+          }}
+        </h2>
+      </div>
+      <button
+        type="button"
+        class="icon-button"
+        aria-label="Закрыть форму"
+        [disabled]="busy() || fileReading()"
+        (click)="closeDialog()"
+      >
+        <app-icon name="close" />
+      </button>
+    </div>
+    @if (mode() === 'create') {
+      <p class="muted">
+        Добавьте модель в общий реестр. Первую версию можно загрузить после создания.
+      </p>
+      <label class="form-field"
+        >Название модели<input
+          autofocus
+          required
+          maxlength="200"
+          [value]="name()"
+          (input)="name.set(field($event))"
+          placeholder="Например, Сеть Урала · 220 кВ"
+      /></label>
+      <label class="form-field"
+        >Регион<input
+          required
+          maxlength="100"
+          [value]="region()"
+          (input)="region.set(field($event))"
+          placeholder="Свердловская область"
+      /></label>
+      <label class="form-field"
+        >Организация-владелец<select (change)="ownerId.set(field($event))">
+          @for (o of organizations(); track o.id) {
+            <option [value]="o.id" [selected]="o.id === ownerId()">{{ o.name }}</option>
+          }
+        </select></label
+      >
+    } @else if (mode() === 'upload') {
+      <p class="muted">
+        База — актуальная опубликованная версия. Проверка найдёт ошибки структуры и различия
+        объектов.
+      </p>
+      <label class="form-field"
+        >Описание изменения<input
+          autofocus
+          required
+          maxlength="300"
+          [value]="title()"
+          (input)="title.set(field($event))"
+          placeholder="Что изменилось в модели?"
+      /></label>
+      <label class="file-field"
+        ><app-icon name="upload" /><span
+          >Выбрать JSON-файл <small>до 1,5 МБ · 1–1000 объектов</small></span
+        ><input
+          type="file"
+          accept=".json,application/json"
+          aria-label="Файл модели"
+          [disabled]="busy() || fileReading()"
+          (change)="readFile($event)"
+      /></label>
+      <label class="form-field"
+        >JSON модели<textarea
+          rows="10"
+          spellcheck="false"
+          required
+          [value]="json()"
+          (input)="json.set(field($event))"
+        ></textarea>
+      </label>
+    } @else {
+      <p class="muted">Комментарий останется в истории. Исправления загружаются новой версией.</p>
+      <label class="form-field"
+        >Причина возврата<textarea
+          autofocus
+          required
+          maxlength="2000"
+          rows="4"
+          [value]="comment()"
+          (input)="comment.set(field($event))"
+        ></textarea>
+      </label>
+    }
+    @if (formError()) {
+      <div class="form-error" role="alert">
+        {{ formError() }}
+        @if (formError().includes('Данные изменились')) {
+          <button type="button" class="secondary" (click)="refresh()" [disabled]="busy()">
+            Обновить данные
+          </button>
+        }
+      </div>
+    }
+    <div class="form-attribution">
+      Действие от имени: <strong>{{ orgName(organizationId()) }}</strong>
+    </div>
+    <div class="dialog-actions">
+      <button
+        type="button"
+        class="secondary"
+        (click)="closeDialog()"
+        [disabled]="busy() || fileReading()"
+      >
+        Отмена</button
+      ><button class="primary" type="submit" [disabled]="busy() || fileReading()">
+        {{
+          busy()
+            ? 'Сохраняем…'
+            : mode() === 'create'
+              ? 'Создать модель'
+              : mode() === 'upload'
+                ? 'Проверить и сохранить'
+                : 'Вернуть автору'
+        }}
+      </button>
+    </div>
+  </form>
+</dialog>

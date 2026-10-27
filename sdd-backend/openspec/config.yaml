@@ -1,0 +1,40 @@
+# Репозиторий приложения sdd-backend. Схема sdd-app (дополнение openspec-sdd): локальное изменение «указатель → design → tasks».
+# Хранилище sdd-specs подключено только для чтения: агент видит поведение, контракт и тест-кейсы, но пишет только сюда.
+schema: sdd-app
+
+references:
+  - sdd-specs
+
+context: |
+  Language: Russian. Артефакты на русском; служебные заголовки OpenSpec (## Why, ## What Changes и т. п.) на английском.
+  Приложение: sdd-backend. Владелец: бэкенд-разработчик команды.
+  C# / ASP.NET Core (.NET 10), Minimal API; эндпоинты фич — src/Sdd.Api/Features/<Capability>/, подключение в Program.cs через app.Map<Capability>().
+  Тесты xUnit: tests/unit (Sdd.Api.UnitTests), tests/integration (Sdd.Api.IntegrationTests, WebApplicationFactory<Program>).
+  Название автотеста: [Fact(DisplayName = "[<кейс>] ...")] + [Trait("Scenario", "<сценарий>")] + [Trait("TestCase", "<кейс>")].
+  Поведение фич — в хранилище sdd-specs (дельта spec.md изменения), стык с другим приложением — design.md изменения в хранилище,
+  контракт API — sdd-specs/contracts/*.yaml. Тест-кейсы — test-cases.md изменения в хранилище; свои кейсы (автотест живёт здесь):
+  openspec-sdd cases --repo sdd-backend --change <изменение>.
+  Читать хранилище: openspec show <изменение> --type change --store sdd-specs; openspec show <spec> --type spec --store sdd-specs;
+  файлы contracts/ и test-cases.md — в ../sdd-specs, только чтение.
+  Kubernetes, Linux-контейнеры, кластер на Windows или Linux; конфигурация только через переменные окружения.
+
+rules:
+  proposal:
+    - "Имя локального изменения: <изменение-в-хранилище>-back"
+    - "What Changes — только ссылки: sdd-specs/openspec/changes/<изменение>/specs/..., .../design.md, sdd-specs/contracts/<файл> с версией, ID своих тест-кейсов [..]"
+  design:
+    - "Только внутренности sdd-backend; договорённости со вторым приложением и контракт — ссылкой на хранилище. Нужно отступить от контракта — остановиться и поднять вопрос в хранилище"
+    - "Новые переменные окружения, порты, тома — раздел «Развёртывание (Kubernetes)» и правка deploy/k8s"
+  tasks:
+    - "На каждый свой тест-кейс (Automation начинается с sdd-backend/) — задача с его ID: «Автотест [<кейс>] в <путь>», до задачи реализации"
+    - "Последняя группа: openspec-sdd trace-check --strict без ошибок, все тесты репозитория зелёные"
+
+operations:
+  apply:
+    guidance:
+      - "Сначала автотест по ID тест-кейса (красный), потом реализация (зелёный)"
+      - "Хранилище sdd-specs не править; требование неверно или неполно — остановиться и предложить /opsx:update в sdd-specs"
+      - "После своих задач — openspec-sdd trace-check; перед /opsx:verify — openspec-sdd trace-check --strict"
+  archive:
+    guidance:
+      - "Архивировать, когда все задачи отмечены, тесты зелёные и openspec-sdd trace-check --strict без ошибок; затем отметить свою группу в tasks.md изменения хранилища (это делает владелец хранилища)"

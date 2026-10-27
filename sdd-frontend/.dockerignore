@@ -1,0 +1,13 @@
+node_modules/
+dist/
+.angular/
+tests/
+test-results/
+playwright-report/
+openspec/
+.git/
+.claude/
+.agents/
+.codex/
+.vscode/
+*.md

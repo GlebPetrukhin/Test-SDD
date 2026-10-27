@@ -1,0 +1,39 @@
+# Контракт API capability system-status. Пишут бэк и фронт вместе, меняется только через изменение в sdd-specs.
+# Версия — info.version: при любом изменении контракта поднять и указать новую версию в design.md изменения.
+openapi: 3.1.0
+info:
+  title: SDD — статус системы
+  version: 1.0.0
+  description: |
+    Поведение — sdd-specs/openspec/specs/system-status/spec.md.
+    История: 1.0.0 — 2026-10-27-add-system-status.
+paths:
+  /api/status:
+    get:
+      operationId: getSystemStatus
+      summary: Статус бэкенда и версия развёрнутой сборки
+      security: []
+      responses:
+        '200':
+          description: Сервис смог ответить
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusResponse'
+              example:
+                status: ok
+                version: 1.4.2
+components:
+  schemas:
+    StatusResponse:
+      type: object
+      required: [status, version]
+      additionalProperties: false
+      properties:
+        status:
+          type: string
+          const: ok
+          description: Всегда ok, если сервис смог ответить
+        version:
+          type: string
+          description: Значение переменной окружения APP_VERSION без пробелов по краям; dev, если не задана или пустая

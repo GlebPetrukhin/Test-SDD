@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Sdd.Api/Sdd.Api.csproj" />
+  </Folder>
+  <Folder Name="/tests/" />
+  <Folder Name="/tests/integration/">
+    <Project Path="tests/integration/Sdd.Api.IntegrationTests.csproj" />
+  </Folder>
+  <Folder Name="/tests/unit/">
+    <Project Path="tests/unit/Sdd.Api.UnitTests.csproj" />
+  </Folder>
+</Solution>

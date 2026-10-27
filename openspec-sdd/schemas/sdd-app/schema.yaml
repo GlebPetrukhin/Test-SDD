@@ -1,0 +1,83 @@
+name: sdd-app
+version: 1
+description: "SDD application repository - local change of one app: pointer to the store feature → internal design → checklist"
+# Used in application repositories (backend, frontend) that reference the product store read-only.
+# Behavior (spec deltas), shared decisions, the API contract and test cases live in the store;
+# this schema covers only what is inside one application. No spec deltas here.
+artifacts:
+  - id: proposal
+    generates: proposal.md
+    description: Pointer to the feature in the store - links, not a retelling
+    template: proposal.md
+    instruction: |
+      Write a short pointer to the feature this repository implements. The behavior,
+      the shared decisions, the API contract and the test cases live in the
+      referenced store; link to them instead of restating them.
+
+      Find the feature in the store first: the referenced-stores index in these
+      instructions lists the store's specs with a Fetch command; read the store
+      change with `openspec show <change> --type change --store <store-id>` and the
+      relevant specs with `openspec show <spec-id> --type spec --store <store-id>`.
+      If the project provides a command that lists the test cases owned by this
+      repository (see project rules), use it.
+
+      Sections:
+      - **Why**: one or two sentences - which store change (feature) this local
+        change implements, and the tracker item if there is one.
+      - **What Changes**: links only - the store change, its spec delta(s), the
+        shared design, the API contract file with its version, and the IDs of the
+        test cases whose automated tests live in this repository.
+      - **Impact**: what changes inside this repository (modules, migrations,
+        configuration, deployment). No user-visible behavior here.
+
+      Never copy requirements or scenarios: if the behavior changes in the store,
+      a copy here would silently go stale.
+    requires: []
+
+  - id: design
+    generates: design.md
+    description: How this application implements the feature internally
+    template: design.md
+    instruction: |
+      Explain how THIS application implements the feature. Everything the store does
+      not say belongs here: data model and migrations, queries, transactions,
+      classes or components, state handling, permissions, logging and metrics,
+      feature flags, deployment steps.
+
+      Do not restate the shared decisions or the API contract - reference them.
+      If the implementation needs something the contract or the shared design does
+      not allow, stop and raise it with the other side and the store owner: the
+      contract changes only through the store.
+
+      Sections: **Context** (links to the store artifacts), **Decisions** (with the
+      alternatives considered), **Risks / Trade-offs**, **Migration Plan** when
+      something must be rolled out in steps.
+    requires:
+      - proposal
+
+  - id: tasks
+    generates: tasks.md
+    description: Checklist for this application - where I stopped
+    template: tasks.md
+    instruction: |
+      Break this application's work into a checklist. It is also the "where I
+      stopped" record when someone is pulled onto something urgent.
+
+      Follow the template: group tasks under `## N.` headings and number every
+      task `N.M` within its group (`- [ ] 1.1 ...`); a box holding only `x` is done.
+
+      Every test case owned by this repository (its automated test lives here) MUST
+      have a task that names its ID; put it before the implementation task it
+      verifies. Do not list tasks of other repositories or of QA.
+
+      Each task states how to verify it (a test, a command, an observable result).
+    requires:
+      - design
+
+apply:
+  requires: [tasks]
+  tracks: tasks.md
+  instruction: |
+    Work through the pending tasks in order, test first for every test case ID.
+    Read the store artifacts read-only; never edit the store from this repository.
+    Mark tasks complete as you go. Pause on blockers or contract questions.

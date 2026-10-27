@@ -1,0 +1,31 @@
+{
+  "folders": [
+    {
+      "name": "sdd-specs (поведение, стык, тест-кейсы)",
+      "path": "sdd-specs"
+    },
+    {
+      "name": "sdd-backend",
+      "path": "sdd-backend"
+    },
+    {
+      "name": "sdd-frontend",
+      "path": "sdd-frontend"
+    },
+    {
+      "name": "openspec-sdd (дополнение OpenSpec)",
+      "path": "openspec-sdd"
+    }
+  ],
+  "settings": {
+    "files.eol": "\n"
+  },
+  "extensions": {
+    "recommendations": [
+      "angular.ng-template",
+      "ms-dotnettools.csdevkit",
+      "ms-playwright.playwright",
+      "ms-kubernetes-tools.vscode-kubernetes-tools"
+    ]
+  }
+}
