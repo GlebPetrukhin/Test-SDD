@@ -1,7 +1,7 @@
 // Пути: пакет дополнения, пользовательская папка схем OpenSpec, корень хранилища спецификаций.
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { homedir, platform } from 'node:os';
-import { dirname, join, resolve } from 'node:path';
+import { dirname, join, posix, resolve, win32 } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
 
@@ -14,12 +14,13 @@ export const BUNDLED_SCHEMAS = join(PKG_ROOT, 'schemas');
  * XDG_DATA_HOME > %LOCALAPPDATA% (Windows) > ~/.local/share; внутри openspec/schemas.
  */
 export function userSchemasDir(env = process.env, os = platform(), home = homedir()) {
-  if (env.XDG_DATA_HOME) return join(env.XDG_DATA_HOME, 'openspec', 'schemas');
+  const platformJoin = os === 'win32' ? win32.join : posix.join;
+  if (env.XDG_DATA_HOME) return platformJoin(env.XDG_DATA_HOME, 'openspec', 'schemas');
   if (os === 'win32') {
-    const base = env.LOCALAPPDATA || join(home, 'AppData', 'Local');
-    return join(base, 'openspec', 'schemas');
+    const base = env.LOCALAPPDATA || platformJoin(home, 'AppData', 'Local');
+    return platformJoin(base, 'openspec', 'schemas');
   }
-  return join(home, '.local', 'share', 'openspec', 'schemas');
+  return platformJoin(home, '.local', 'share', 'openspec', 'schemas');
 }
 
 /** Строка конфигурации `key: value` верхнего уровня из openspec/config.yaml (без YAML-парсера). */
